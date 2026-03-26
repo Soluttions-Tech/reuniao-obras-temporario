@@ -426,6 +426,104 @@
   }
   .output-a.empty { color: var(--muted); font-style: italic; }
 
+  /* ── SESSION BAR ── */
+  .session-bar {
+    background: white;
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .session-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .session-name-input {
+    flex: 1;
+    min-width: 160px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    padding: 6px 10px;
+    background: var(--cream);
+    outline: none;
+  }
+  .session-name-input:focus { border-color: var(--navy-light); background: white; }
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 7px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .btn-sm-primary { background: var(--navy); color: white; }
+  .btn-sm-primary:hover { background: var(--navy-light); }
+  .btn-sm-ghost { background: var(--cream); color: var(--navy); border: 1.5px solid var(--border); }
+  .btn-sm-ghost:hover { border-color: var(--navy); }
+  .btn-sm-danger { background: #fee2e2; color: #dc2626; }
+  .btn-sm-danger:hover { background: #fecaca; }
+  .btn-sm-orange { background: var(--orange); color: white; }
+  .btn-sm-orange:hover { background: #ea6c06; }
+
+  /* ── SESSIONS PANEL ── */
+  .sessions-panel {
+    display: none;
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-lg);
+    border: 2px solid var(--navy);
+  }
+  .sessions-panel.open { display: block; animation: fadeIn 0.2s ease; }
+  .sessions-panel h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .session-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+  }
+  .session-item:hover { border-color: var(--navy-light); }
+  .session-item-name { font-weight: 600; font-size: 14px; color: var(--ink); flex: 1; }
+  .session-item-date { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .session-item-pct {
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--navy);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .sessions-empty { color: var(--muted); font-size: 14px; text-align: center; padding: 24px; }
+
   #print-btn {
     display: none;
   }
@@ -466,6 +564,24 @@
 </header>
 
 <div class="container">
+
+  <!-- SESSION BAR -->
+  <div class="session-bar">
+    <span class="session-label">Sessão:</span>
+    <input class="session-name-input" id="session-name" type="text" placeholder="Ex: Reunião Diretor 26/03" maxlength="60">
+    <button class="btn-sm btn-sm-primary" onclick="saveSession()">💾 Salvar sessão</button>
+    <button class="btn-sm btn-sm-ghost" onclick="toggleSessionsPanel()">📋 Ver salvas (<span id="session-count">0</span>)</button>
+    <button class="btn-sm btn-sm-orange" onclick="newSession()">＋ Nova sessão</button>
+  </div>
+
+  <!-- SESSIONS PANEL -->
+  <div class="sessions-panel" id="sessions-panel">
+    <h3>
+      <span>Sessões salvas</span>
+      <button class="btn-sm btn-sm-ghost" onclick="toggleSessionsPanel()">✕ Fechar</button>
+    </h3>
+    <div id="sessions-list"></div>
+  </div>
 
   <!-- TABS -->
   <div class="tabs" id="tabs">
@@ -1361,6 +1477,126 @@ function buildSummary() {
   document.getElementById('stat-pct').textContent = Math.round((filled/total)*100) + '%';
 }
 
+// ── SESSION MANAGEMENT ───────────────────────────────────────────────────────
+const SESSIONS_KEY = 'soluttions_sessions_v1';
+
+function getSessions() {
+  try { return JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function saveSessions(sessions) {
+  localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+}
+
+function saveSession() {
+  const name = document.getElementById('session-name').value.trim();
+  if (!name) { showToast('Dê um nome para a sessão antes de salvar', true); return; }
+
+  const data = collectAllData();
+  data.__sessionName = name;
+
+  const sessions = getSessions();
+  const existing = sessions.findIndex(s => s.name === name);
+  const entry = {
+    name,
+    savedAt: new Date().toISOString(),
+    pct: document.getElementById('globalPct').textContent,
+    data
+  };
+
+  if (existing >= 0) {
+    if (!confirm(`Já existe uma sessão chamada "${name}". Deseja substituí-la?`)) return;
+    sessions[existing] = entry;
+  } else {
+    sessions.unshift(entry);
+  }
+
+  saveSessions(sessions);
+  updateSessionCount();
+  showToast(`Sessão "${name}" salva!`);
+}
+
+function loadSession(name) {
+  const sessions = getSessions();
+  const entry = sessions.find(s => s.name === name);
+  if (!entry) return;
+  clearForm();
+  restoreData(entry.data);
+  document.getElementById('session-name').value = name;
+  toggleSessionsPanel();
+  showToast(`Sessão "${name}" carregada`);
+}
+
+function deleteSession(name) {
+  if (!confirm(`Apagar a sessão "${name}"?`)) return;
+  const sessions = getSessions().filter(s => s.name !== name);
+  saveSessions(sessions);
+  renderSessionsList();
+  updateSessionCount();
+  showToast(`Sessão "${name}" apagada`);
+}
+
+function newSession() {
+  const name = document.getElementById('session-name').value.trim();
+  if (name) {
+    if (!confirm(`Iniciar nova sessão? Os dados atuais de "${name}" não serão perdidos se já tiver salvo.`)) return;
+  }
+  clearForm();
+  document.getElementById('session-name').value = '';
+  goToTab(0);
+  showToast('Nova sessão iniciada');
+}
+
+function clearForm() {
+  document.querySelectorAll('textarea, input[type="text"], input[type="hidden"]').forEach(el => el.value = '');
+  document.querySelectorAll('select').forEach(el => el.value = '');
+  document.querySelectorAll('.option-chip.selected').forEach(c => c.classList.remove('selected'));
+  visitedTabs.clear();
+  visitedTabs.add(0);
+  updateProgress();
+}
+
+function toggleSessionsPanel() {
+  const panel = document.getElementById('sessions-panel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) renderSessionsList();
+}
+
+function renderSessionsList() {
+  const sessions = getSessions();
+  const list = document.getElementById('sessions-list');
+  if (!sessions.length) {
+    list.innerHTML = '<div class="sessions-empty">Nenhuma sessão salva ainda.<br>Preencha o formulário e clique em <strong>💾 Salvar sessão</strong>.</div>';
+    return;
+  }
+  list.innerHTML = sessions.map(s => {
+    const date = new Date(s.savedAt).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+    return `<div class="session-item">
+      <div>
+        <div class="session-item-name">${s.name}</div>
+        <div class="session-item-date">Salva em ${date}</div>
+      </div>
+      <span class="session-item-pct">${s.pct}</span>
+      <button class="btn-sm btn-sm-primary" onclick="loadSession('${s.name.replace(/'/g,"\\'")}')">Carregar</button>
+      <button class="btn-sm btn-sm-ghost" onclick="exportSessionJSON('${s.name.replace(/'/g,"\\'")}')">JSON</button>
+      <button class="btn-sm btn-sm-danger" onclick="deleteSession('${s.name.replace(/'/g,"\\'")}')">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function exportSessionJSON(name) {
+  const sessions = getSessions();
+  const entry = sessions.find(s => s.name === name);
+  if (!entry) return;
+  const filename = `sessao_${name.replace(/[^a-z0-9]/gi,'_')}_${new Date().toISOString().slice(0,10)}.json`;
+  downloadBlob(JSON.stringify(entry.data, null, 2), filename, 'application/json');
+}
+
+function updateSessionCount() {
+  document.getElementById('session-count').textContent = getSessions().length;
+}
+
 // ── AUTOSAVE (localStorage) ───────────────────────────────────────────────────
 const SAVE_KEY = 'soluttions_reuniao_v1';
 
@@ -1543,6 +1779,7 @@ document.querySelectorAll('textarea, input, select').forEach(el => {
 // Restore from localStorage on load
 window.addEventListener('DOMContentLoaded', () => {
   goToTab(0); // initialize button states
+  updateSessionCount();
   loadFromURL();
   if (!window.location.search.includes('?d=')) {
     try {
