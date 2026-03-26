@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reunião Diretor de Obras — Soluttions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2340;
+    --navy-mid: #1a3a5c;
+    --navy-light: #1e4976;
+    --orange: #f97316;
+    --orange-light: #fff3e8;
+    --cream: #faf8f4;
+    --ink: #1c1c1e;
+    --muted: #6b7280;
+    --border: #e2e4e8;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --white: #ffffff;
+    --shadow: 0 2px 12px rgba(15,35,64,0.08);
+    --shadow-lg: 0 8px 32px rgba(15,35,64,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-dot {
+    width: 8px; height: 8px;
+    background: var(--orange);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.3); }
+  }
+  .brand-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: white;
+    letter-spacing: 0.02em;
+  }
+  .header-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+  }
+  .progress-bar-wrap {
+    width: 140px;
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+  .progress-pct {
+    font-size: 12px;
+    color: var(--orange);
+    font-weight: 600;
+    min-width: 32px;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  /* ── NAV TABS ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: white;
+    border-radius: 12px;
+    padding: 6px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: relative;
+  }
+  .tab:hover { background: var(--cream); color: var(--ink); }
+  .tab.active {
+    background: var(--navy);
+    color: white;
+  }
+  .tab .tab-check {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .tab.done .tab-check {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+  }
+  .tab.active .tab-check {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+
+  /* ── SECTION PANEL ── */
+  .section-panel {
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+  .section-panel.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-icon {
+    width: 48px; height: 48px;
+    background: var(--navy);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--navy); }
+  .section-subtitle { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:focus-within {
+    border-color: var(--navy-light);
+    box-shadow: var(--shadow-lg), 0 0 0 3px rgba(30,73,118,0.08);
+  }
+
+  .card-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    background: var(--navy);
+    color: white;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+  }
+  .card-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .card-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  textarea, input[type="text"], input[type="number"], select {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    resize: vertical;
+  }
+  textarea:focus, input:focus, select:focus {
+    border-color: var(--navy-light);
+    background: white;
+  }
+  textarea { min-height: 80px; }
+
+  /* Radio & checkbox groups */
+  .option-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .option-chip {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .option-chip:hover { border-color: var(--navy-mid); color: var(--ink); }
+  .option-chip.selected {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: white;
+    font-weight: 500;
+  }
+  .option-chip.multi.selected {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+
+  /* Field table */
+  .field-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .field-table th {
+    background: var(--navy);
+    color: white;
+    padding: 9px 12px;
+    text-align: left;
+    font-weight: 500;
+  }
+  .field-table th:first-child { border-radius: 8px 0 0 0; }
+  .field-table th:last-child { border-radius: 0 8px 0 0; }
+  .field-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .field-table tr:last-child td { border-bottom: none; }
+  .field-table tr:nth-child(even) td { background: var(--cream); }
+  .field-table td:first-child { font-weight: 500; color: var(--ink); }
+  .field-table td:nth-child(2) { color: var(--muted); font-size: 12px; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-required { background: #dcfce7; color: #15803d; }
+  .badge-optional { background: #fff3e8; color: #c2410c; }
+
+  .status-select {
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: white;
+    border: 1.5px solid var(--border);
+    color: var(--ink);
+    cursor: pointer;
+    max-width: 140px;
+  }
+
+  /* ── NAVIGATION BUTTONS ── */
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--navy); color: white; }
+  .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(15,35,64,0.2); }
+  .btn-secondary { background: white; color: var(--navy); border: 1.5px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--navy); background: var(--cream); }
+  .btn-export { background: var(--orange); color: white; }
+  .btn-export:hover { background: #ea6c06; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(249,115,22,0.3); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+  /* ── EXPORT PANEL ── */
+  .export-summary {
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 32px;
+    color: white;
+    margin-bottom: 24px;
+  }
+  .export-summary h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  .export-meta { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 20px; }
+  .export-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .stat-box {
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--orange); }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+  .output-block {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+  .output-block h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--navy);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .output-item {
+    margin-bottom: 12px;
+  }
+  .output-q {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .output-a {
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 8px 12px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  .output-a.empty { color: var(--muted); font-style: italic; }
+
+  #print-btn {
+    display: none;
+  }
+
+  @media print {
+    .header, .tabs, .nav-buttons, .btn { display: none !important; }
+    .section-panel { display: block !important; }
+    .export-summary { background: var(--navy) !important; -webkit-print-color-adjust: exact; }
+    body { background: white; }
+  }
+
+  @media (max-width: 640px) {
+    .container { padding: 24px 16px; }
+    .header-inner { padding: 12px 16px; }
+    .export-stats { grid-template-columns: repeat(2, 1fr); }
+    .tab { font-size: 11px; padding: 8px 10px; }
+    .tabs { gap: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">Soluttions</span>
+    </div>
+    <div class="header-progress">
+      <span id="save-status" style="font-size:11px; color:rgba(255,255,255,0.45); margin-right:8px;"></span>
+      <span class="progress-label">Preenchimento</span>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="globalBar" style="width:0%"></div>
+      </div>
+      <span class="progress-pct" id="globalPct">0%</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TABS -->
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="0"><span class="tab-check">✓</span>Produto</button>
+    <button class="tab" data-tab="1"><span class="tab-check">✓</span>Processo</button>
+    <button class="tab" data-tab="2"><span class="tab-check">✓</span>Cadastro</button>
+    <button class="tab" data-tab="3"><span class="tab-check">✓</span>Diário</button>
+    <button class="tab" data-tab="4"><span class="tab-check">✓</span>Portal</button>
+    <button class="tab" data-tab="5"><span class="tab-check">✓</span>Novas Func.</button>
+    <button class="tab" data-tab="6"><span class="tab-check">✓</span>Provocações</button>
+    <button class="tab" data-tab="7"><span class="tab-check">✓</span>Resumo</button>
+  </div>
+
+  <!-- ═══ BLOCO 0 — PRODUTO ═══ -->
+  <div class="section-panel active" id="panel-0">
+    <div class="section-header">
+      <div class="section-icon">💻</div>
+      <div>
+        <div class="section-title">Reação ao Produto</div>
+        <div class="section-subtitle">Bloco 2 do roteiro — 20 min · Observe reações espontâneas durante a demo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">01</div>
+      <div class="card-label">O que imediatamente parece útil no dia a dia? O que não seria usado?</div>
+      <div class="card-hint">Anote exatamente o que ele disser — útil e o que ignorou</div>
+      <textarea id="q01" placeholder="O que ele destacou como útil...&#10;O que ele ignorou ou não se empolgou..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">02</div>
+      <div class="card-label">Sentiu falta de alguma coisa enquanto usava?</div>
+      <div class="card-hint">Gaps espontâneos, sem indução</div>
+      <textarea id="q02" placeholder="Gaps citados espontaneamente..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">03</div>
+      <div class="card-label">O que precisaria estar lá para mostrar ao engenheiro de campo amanhã?</div>
+      <div class="card-hint">Ancora no campo, não na gestão</div>
+      <textarea id="q03" placeholder="O que seria essencial para o engenheiro de campo..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">04</div>
+      <div class="card-label">Impressão geral — nota de 1 a 10 e justificativa</div>
+      <div class="card-hint">Registro rápido do sentimento inicial</div>
+      <div class="option-group" id="nota-group">
+        <span class="option-chip" data-group="nota" data-val="1">1</span>
+        <span class="option-chip" data-group="nota" data-val="2">2</span>
+        <span class="option-chip" data-group="nota" data-val="3">3</span>
+        <span class="option-chip" data-group="nota" data-val="4">4</span>
+        <span class="option-chip" data-group="nota" data-val="5">5</span>
+        <span class="option-chip" data-group="nota" data-val="6">6</span>
+        <span class="option-chip" data-group="nota" data-val="7">7</span>
+        <span class="option-chip" data-group="nota" data-val="8">8</span>
+        <span class="option-chip" data-group="nota" data-val="9">9</span>
+        <span class="option-chip" data-group="nota" data-val="10">10</span>
+      </div>
+      <input type="hidden" id="q04-nota">
+      <textarea id="q04-just" style="margin-top:10px" placeholder="Justificativa / comentário sobre a nota..."></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="prevTab()" disabled>← Anterior</button>
+      <button class="btn btn-primary" onclick="nextTab()">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ═══ BLOCO 1 — PROCESSO ═══ -->
+  <div class="section-panel" id="panel-1">
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <div>
+        <div class="section-title">Como Trabalham Hoje</div>
+        <div class="section-subtitle">Bloco 3 do roteiro — 30 min · Escutar mais do que falar</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">05</div>
+      <div class="card-label">Como o engenheiro/fiscal registra o que aconteceu no dia? Existe padrão de diário?</div>
+      <div class="card-hint">Descobre se há template, frequência, nível de detalhe e por onde circula</div>
+      <div class="option-group" style="margin-bottom:10px" id="diario-tipo-group">
+        <span class="option-chip multi" data-group="diario-tipo" data-val="planilha">Planilha</span>
+        <span class="option-chip multi" data-group="diario-tipo" data-val="papel">Papel</span>
+        <span class="option-chip multi" data-group="diario-tipo" data-val="whatsapp">WhatsApp</span>
+        <span class="option-chip multi" data-group="diario-tipo" data-val="email">E-mail</span>
+        <span class="option-chip multi" data-group="diario-tipo" data-val="sistema">Sistema</span>
+        <span class="option-chip multi" data-group="diario-tipo" data-val="nao-tem">Não tem padrão</span>
+      </div>
+      <input type="hidden" id="q05-tipo">
+      <textarea id="q05" placeholder="Detalhes: frequência de preenchimento, quem preenche, o que inclui..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">06</div>
+      <div class="card-label">Como as evidências fotográficas são capturadas e para onde vão?</div>
+      <div class="card-hint">Revela onde os dados nascem e como chegam a quem precisa</div>
+      <div class="option-group" style="margin-bottom:10px" id="foto-destino-group">
+        <span class="option-chip multi" data-group="foto-destino" data-val="whatsapp">WhatsApp</span>
+        <span class="option-chip multi" data-group="foto-destino" data-val="drive">Google Drive</span>
+        <span class="option-chip multi" data-group="foto-destino" data-val="email">E-mail</span>
+        <span class="option-chip multi" data-group="foto-destino" data-val="pasta-local">Pasta local</span>
+        <span class="option-chip multi" data-group="foto-destino" data-val="sem-destino">Sem destino definido</span>
+      </div>
+      <input type="hidden" id="q06-foto">
+      <textarea id="q06" placeholder="Como organiza, quem acessa, há perda de informação..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">07</div>
+      <div class="card-label">Quando algo relevante acontece na obra, como chega até ele e ao cliente?</div>
+      <div class="card-hint">Mapeia fluxo de comunicação crítica e pontos de falha</div>
+      <textarea id="q07" placeholder="Fluxo de atraso, problema de qualidade, incidente → quem comunica → como → quando..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">08</div>
+      <div class="card-label">Onde ficam os arquivos das obras hoje? Quem tem acesso?</div>
+      <div class="card-hint">Estado atual do repositório</div>
+      <textarea id="q08" placeholder="Pasta, servidor, Drive, sistema... quem acessa, se há controle de versão..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">09</div>
+      <div class="card-label">Usam algum software de gestão hoje, mesmo que parcial?</div>
+      <div class="card-hint">Identifica concorrência interna e dados para migrar</div>
+      <div class="option-group" style="margin-bottom:10px" id="software-group">
+        <span class="option-chip multi" data-group="software" data-val="excel">Excel / Sheets</span>
+        <span class="option-chip multi" data-group="software" data-val="ms-project">MS Project</span>
+        <span class="option-chip multi" data-group="software" data-val="totvs">TOTVS</span>
+        <span class="option-chip multi" data-group="software" data-val="sienge">Sienge</span>
+        <span class="option-chip multi" data-group="software" data-val="obra-prima">Obra Prima</span>
+        <span class="option-chip multi" data-group="software" data-val="nenhum">Nenhum</span>
+        <span class="option-chip multi" data-group="software" data-val="outro">Outro</span>
+      </div>
+      <input type="hidden" id="q09-sw">
+      <textarea id="q09" placeholder="Qual software, para que usa, o que está funcionando e o que falta..."></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="prevTab()">← Anterior</button>
+      <button class="btn btn-primary" onclick="nextTab()">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ═══ BLOCO 2 — CADASTRO ═══ -->
+  <div class="section-panel" id="panel-2">
+    <div class="section-header">
+      <div class="section-icon">📋</div>
+      <div>
+        <div class="section-title">Cadastro de Obra</div>
+        <div class="section-subtitle">Apresente a tabela abaixo — peça ao diretor para validar campo a campo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:16px">Validação dos campos — altere o status conforme a resposta do diretor</div>
+      <table class="field-table">
+        <thead>
+          <tr>
+            <th>Campo</th>
+            <th>Grupo</th>
+            <th>Proposto</th>
+            <th>Diretor confirma como</th>
+          </tr>
+        </thead>
+        <tbody id="campos-tbody">
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-num">★</div>
+      <div class="card-label">Campos adicionais mencionados pelo diretor (não estavam na lista)</div>
+      <textarea id="q10-extra" placeholder="Campo novo 1: ...&#10;Campo novo 2: ...&#10;Campo novo 3: ..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">10</div>
+      <div class="card-label">Como é a estrutura de responsáveis — hierarquia, quem aprova o quê?</div>
+      <div class="card-hint">Define intervenientes e fluxos de aprovação</div>
+      <textarea id="q10" placeholder="Engenheiro residente, fiscal, coordenador... como se relacionam..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">11</div>
+      <div class="card-label">Existe categorização de obras — tipo, porte, fase?</div>
+      <div class="card-hint">Define atributos de classificação e filtros do dashboard</div>
+      <textarea id="q11" placeholder="Categorias usadas, como classificam internamente..."></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="prevTab()">← Anterior</button>
+      <button class="btn btn-primary" onclick="nextTab()">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ═══ BLOCO 3 — DIÁRIO ═══ -->
+  <div class="section-panel" id="panel-3">
+    <div class="section-header">
+      <div class="section-icon">📓</div>
+      <div>
+        <div class="section-title">Diário de Obra</div>
+        <div class="section-subtitle">Defina com o diretor a estrutura ideal — campo a campo</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">12</div>
+      <div class="card-label">Diário ideal para um fiscal preencher em 10 min no canteiro — o que não pode faltar?</div>
+      <div class="card-hint">Define campos essenciais com critério de praticidade</div>
+      <textarea id="q12" placeholder="O que ele citou como obrigatório..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">13</div>
+      <div class="card-label">Quando o diário é preenchido? Quem preenche?</div>
+      <div class="card-hint">Comportamento real de uso — define o design da interface</div>
+      <div class="option-group" style="margin-bottom:10px" id="momento-group">
+        <span class="option-chip" data-group="momento" data-val="durante">Durante a obra</span>
+        <span class="option-chip" data-group="momento" data-val="final-dia">Final do dia</span>
+        <span class="option-chip" data-group="momento" data-val="retroativo">Retroativo</span>
+        <span class="option-chip" data-group="momento" data-val="nao-tem">Não tem hoje</span>
+      </div>
+      <input type="hidden" id="q13-momento">
+      <textarea id="q13" placeholder="Quem preenche (engenheiro, fiscal, ambos), em que dispositivo..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:16px">Validação das seções do diário — marque o status de cada seção</div>
+      <table class="field-table">
+        <thead>
+          <tr>
+            <th>Seção</th>
+            <th>Campos principais</th>
+            <th>Decisão do diretor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Condições Climáticas</td>
+            <td>Tempo, temperatura, chuva impediu</td>
+            <td><select class="status-select" id="sec-clima" onchange="updateField('sec-clima')">
+              <option value="">-- validar --</option>
+              <option value="obrigatorio">Obrigatório</option>
+              <option value="opcional">Opcional</option>
+              <option value="remover">Remover</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>Mão de Obra</td>
+            <td>Empresa, função, quantidade</td>
+            <td><select class="status-select" id="sec-mo" onchange="updateField('sec-mo')">
+              <option value="">-- validar --</option>
+              <option value="obrigatorio">Obrigatório</option>
+              <option value="opcional">Opcional</option>
+              <option value="remover">Remover</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>Atividades Executadas</td>
+            <td>Serviço, local, estado, obs.</td>
+            <td><select class="status-select" id="sec-ativ" onchange="updateField('sec-ativ')">
+              <option value="">-- validar --</option>
+              <option value="obrigatorio">Obrigatório</option>
+              <option value="opcional">Opcional</option>
+              <option value="remover">Remover</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>Materiais e Equipamentos</td>
+            <td>Item, quantidade, unidade</td>
+            <td><select class="status-select" id="sec-mat" onchange="updateField('sec-mat')">
+              <option value="">-- validar --</option>
+              <option value="obrigatorio">Obrigatório</option>
+              <option value="opcional">Opcional</option>
+              <option value="remover">Remover</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>Ocorrências</td>
+            <td>Tipo, descrição, ação tomada</td>
+            <td><select class="status-select" id="sec-ocorr" onchange="updateField('sec-ocorr')">
+              <option value="">-- validar --</option>
+              <option value="obrigatorio">Obrigatório</option>
+              <option value="opcional">Opcional</option>
+              <option value="remover">Remover</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>Evidências Fotográficas</td>
+            <td>Upload, legenda, geolocalização</td>
+            <td><select class="status-select" id="sec-foto" onchange="updateField('sec-foto')">
+              <option value="">-- validar --</option>
+              <option value="obrigatorio">Obrigatório</option>
+              <option value="opcional">Opcional</option>
+              <option value="remover">Remover</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>Validação / Assinatura</td>
+            <td>Workflow de aprovação</td>
+            <td><select class="status-select" id="sec-valid" onchange="updateField('sec-valid')">
+              <option value="">-- validar --</option>
+              <option value="obrigatorio">Obrigatório</option>
+              <option value="opcional">Opcional</option>
+              <option value="remover">Remover</option>
+            </select></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-num">14</div>
+      <div class="card-label">Quem precisa assinar ou validar o diário? Há workflow de aprovação?</div>
+      <textarea id="q14" placeholder="Engenheiro → fiscal → coordenador? Como funciona hoje a aprovação..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">15</div>
+      <div class="card-label">Gera algum relatório a partir do diário? Para quem vai?</div>
+      <textarea id="q15" placeholder="Relatório semanal, mensal, para o cliente, para a diretoria..."></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="prevTab()">← Anterior</button>
+      <button class="btn btn-primary" onclick="nextTab()">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ═══ BLOCO 4 — PORTAL ═══ -->
+  <div class="section-panel" id="panel-4">
+    <div class="section-header">
+      <div class="section-icon">👤</div>
+      <div>
+        <div class="section-title">Portal do Cliente</div>
+        <div class="section-subtitle">O que mostrar e o que bloquear — decisão estratégica de negócio</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">16</div>
+      <div class="card-label">Quando um cliente liga sobre a obra, o que ele normalmente quer saber?</div>
+      <div class="card-hint">Define o conteúdo obrigatório do portal</div>
+      <textarea id="q16" placeholder="O que os clientes mais pedem / perguntam..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">17</div>
+      <div class="card-label">Tem informação que NUNCA mostraria para o cliente?</div>
+      <div class="card-hint">Define o que é bloqueado independente de customização</div>
+      <textarea id="q17" placeholder="O que fica só na gestão interna — nunca para o cliente..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-label" style="margin-bottom:12px">Quais informações o cliente deve ver? Marque o que for para o portal</div>
+      <div class="option-group" id="portal-itens-group">
+        <span class="option-chip multi" data-group="portal-itens" data-val="progresso">% de Avanço</span>
+        <span class="option-chip multi" data-group="portal-itens" data-val="prazo">Prazo de entrega</span>
+        <span class="option-chip multi" data-group="portal-itens" data-val="fotos">Fotos da obra</span>
+        <span class="option-chip multi" data-group="portal-itens" data-val="camera">Câmera ao vivo</span>
+        <span class="option-chip multi" data-group="portal-itens" data-val="cronograma">Cronograma</span>
+        <span class="option-chip multi" data-group="portal-itens" data-val="financeiro">Dados financeiros</span>
+        <span class="option-chip multi" data-group="portal-itens" data-val="equipe">Equipe responsável</span>
+        <span class="option-chip multi" data-group="portal-itens" data-val="alertas">Alertas / ocorrências</span>
+        <span class="option-chip multi" data-group="portal-itens" data-val="documentos">Documentos</span>
+        <span class="option-chip multi" data-group="portal-itens" data-val="diario-resumo">Resumo do diário</span>
+      </div>
+      <input type="hidden" id="q18-portal">
+      <textarea id="q18-obs" style="margin-top:12px" placeholder="Observações sobre os itens marcados, condições específicas..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">18</div>
+      <div class="card-label">Nível de detalhe ideal para o cliente — simples ou aprofundado?</div>
+      <div class="option-group" style="margin-bottom:10px" id="nivel-group">
+        <span class="option-chip" data-group="nivel" data-val="simples">Simples — status e fotos</span>
+        <span class="option-chip" data-group="nivel" data-val="medio">Médio — KPIs + cronograma</span>
+        <span class="option-chip" data-group="nivel" data-val="detalhado">Detalhado — tudo disponível</span>
+        <span class="option-chip" data-group="nivel" data-val="varia">Varia por cliente</span>
+      </div>
+      <input type="hidden" id="q18-nivel">
+      <textarea id="q18" placeholder="Como ele diferencia o que cada tipo de cliente precisa ver..."></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="prevTab()">← Anterior</button>
+      <button class="btn btn-primary" onclick="nextTab()">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ═══ BLOCO 5 — NOVAS FUNC ═══ -->
+  <div class="section-panel" id="panel-5">
+    <div class="section-header">
+      <div class="section-icon">🚀</div>
+      <div>
+        <div class="section-title">Novas Funcionalidades</div>
+        <div class="section-subtitle">Câmeras · BIM · Repositório · Trava de aprovação</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">19</div>
+      <div class="card-label">Câmeras ao vivo — já têm instaladas? Que plataforma? Onde ficam os links?</div>
+      <div class="option-group" style="margin-bottom:10px" id="camera-group">
+        <span class="option-chip" data-group="camera" data-val="sim-usam">Sim, já usam</span>
+        <span class="option-chip" data-group="camera" data-val="algumas">Algumas obras</span>
+        <span class="option-chip" data-group="camera" data-val="planejado">Planejado</span>
+        <span class="option-chip" data-group="camera" data-val="nao">Não usam</span>
+      </div>
+      <input type="hidden" id="q19-camera">
+      <textarea id="q19" placeholder="Plataforma (Hikvision, Intelbras, outras), onde ficam os links de acesso, quem pode ver..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">20</div>
+      <div class="card-label">BIM — projetos chegam em formato IFC / Revit? Alguém da equipe usa hoje?</div>
+      <div class="option-group" style="margin-bottom:10px" id="bim-group">
+        <span class="option-chip" data-group="bim" data-val="sim-usa">Sim, usa ativamente</span>
+        <span class="option-chip" data-group="bim" data-val="tem-nao-usa">Tem, mas não usa</span>
+        <span class="option-chip" data-group="bim" data-val="futuro">Vai implementar</span>
+        <span class="option-chip" data-group="bim" data-val="nao">Não usa BIM</span>
+      </div>
+      <input type="hidden" id="q20-bim">
+      <textarea id="q20" placeholder="Formato dos arquivos, quem usa, importância para o MVP..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">21</div>
+      <div class="card-label">Repositório de arquivos — que tipos de documento são mais importantes? Quem acessa?</div>
+      <div class="option-group" style="margin-bottom:10px" id="repo-group">
+        <span class="option-chip multi" data-group="repo" data-val="projetos">Projetos</span>
+        <span class="option-chip multi" data-group="repo" data-val="contratos">Contratos</span>
+        <span class="option-chip multi" data-group="repo" data-val="art">ART / RRT</span>
+        <span class="option-chip multi" data-group="repo" data-val="laudos">Laudos</span>
+        <span class="option-chip multi" data-group="repo" data-val="fotos-hist">Fotos históricas</span>
+        <span class="option-chip multi" data-group="repo" data-val="orcamentos">Orçamentos</span>
+        <span class="option-chip multi" data-group="repo" data-val="atas">Atas de reunião</span>
+        <span class="option-chip multi" data-group="repo" data-val="outros">Outros</span>
+      </div>
+      <input type="hidden" id="q21-repo">
+      <textarea id="q21" placeholder="Quem acessa cada tipo, se o cliente pode baixar, como está organizado hoje..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">22</div>
+      <div class="card-label">Trava de aprovação — como imagina o fluxo? Aprova campo a campo ou perfil completo?</div>
+      <div class="option-group" style="margin-bottom:10px" id="trava-group">
+        <span class="option-chip" data-group="trava" data-val="campo-campo">Campo a campo</span>
+        <span class="option-chip" data-group="trava" data-val="perfil-completo">Perfil completo</span>
+        <span class="option-chip" data-group="trava" data-val="categoria">Por categoria</span>
+        <span class="option-chip" data-group="trava" data-val="discutir">A definir</span>
+      </div>
+      <input type="hidden" id="q22-trava">
+      <textarea id="q22" placeholder="Quem são os aprovadores, prazo esperado de resposta, urgência..."></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="prevTab()">← Anterior</button>
+      <button class="btn btn-primary" onclick="nextTab()">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- ═══ BLOCO 6 — PROVOCAÇÕES ═══ -->
+  <div class="section-panel" id="panel-6">
+    <div class="section-header">
+      <div class="section-icon">💡</div>
+      <div>
+        <div class="section-title">Provocações Estratégicas</div>
+        <div class="section-subtitle">Bloco 5 — 15 min · Convicções espontâneas do diretor</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">P1</div>
+      <div class="card-label">Uma coisa que, se estivesse no sistema, eliminaria uma dor real do dia a dia</div>
+      <textarea id="pq1" placeholder="A resposta mais importante desta sessão..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">P2</div>
+      <div class="card-label">O que faz hoje no WhatsApp/planilha que teria vergonha de mostrar para um cliente grande?</div>
+      <textarea id="pq2" placeholder="Pontos cegos de profissionalização..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">P3</div>
+      <div class="card-label">Como imagina usar no celular, em campo? O que o engenheiro precisaria fazer?</div>
+      <textarea id="pq3" placeholder="Casos de uso mobile levantados..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">P4</div>
+      <div class="card-label">Se um cliente pedisse acesso amanhã — o que faria hesitar em dar?</div>
+      <textarea id="pq4" placeholder="Bloqueadores reais para o lançamento do portal..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">P5</div>
+      <div class="card-label">Algum sistema que admira — de qualquer setor — pelo jeito que resolve um problema parecido?</div>
+      <textarea id="pq5" placeholder="Referências de benchmark, expectativas de qualidade..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-num">P6</div>
+      <div class="card-label">Nos próximos 6 meses: quantas obras? Quantos engenheiros? Muda algo no que precisa?</div>
+      <textarea id="pq6" placeholder="Volume e perfil real de uso..."></textarea>
+    </div>
+
+    <div class="card" style="background: #fff3e8; border-color: #f97316;">
+      <div class="card-label" style="color: #c2410c;">📝 Outros pontos levantados pelo diretor (não cobertos acima)</div>
+      <textarea id="outros" placeholder="Ideias, sugestões, críticas fora dos temas acima...&#10;Prioridades que ele mencionou...&#10;Qualquer dado que não se encaixou nas perguntas..."></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="prevTab()">← Anterior</button>
+      <button class="btn btn-primary" onclick="nextTab()">Ver Resumo →</button>
+    </div>
+  </div>
+
+  <!-- ═══ BLOCO 7 — RESUMO ═══ -->
+  <div class="section-panel" id="panel-7">
+    <div class="section-header">
+      <div class="section-icon">📊</div>
+      <div>
+        <div class="section-title">Resumo da Reunião</div>
+        <div class="section-subtitle">Consolidação de todas as respostas coletadas</div>
+      </div>
+    </div>
+
+    <div class="export-summary">
+      <h2>Relatório de Elicitação</h2>
+      <div class="export-meta" id="export-meta">Soluttions Engenharia · Reunião com Diretor de Obras</div>
+      <div class="export-stats">
+        <div class="stat-box">
+          <div class="stat-num" id="stat-filled">0</div>
+          <div class="stat-label">Campos preenchidos</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">Total de perguntas</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="stat-pct">0%</div>
+          <div class="stat-label">Cobertura</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="summary-content"></div>
+
+    <div id="deploy-guide" style="background:white; border-radius:14px; padding:24px; margin-top:16px; box-shadow:0 2px 12px rgba(15,35,64,0.08);">
+      <h3 style="font-family:'DM Serif Display',serif; font-size:18px; color:#0f2340; margin-bottom:4px; padding-bottom:10px; border-bottom:1px solid #e2e4e8;">🚀 Como publicar esta página (GitHub Pages — gratuito)</h3>
+      <p style="font-size:13px; color:#6b7280; margin-bottom:16px;">URL final: <code style="background:#f3f4f6; padding:2px 6px; border-radius:4px;">https://seu-usuario.github.io/nome-do-repo/</code></p>
+      <div style="display:grid; gap:12px;">
+
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div style="min-width:28px; height:28px; background:#0f2340; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0;">1</div>
+          <div>
+            <div style="font-weight:600; font-size:14px; color:#1c1c1e;">Crie uma conta no GitHub</div>
+            <div style="font-size:13px; color:#6b7280; margin-top:2px;">Acesse <a href="https://github.com" target="_blank" style="color:#f97316;">github.com</a> → <em>Sign up</em> → conta gratuita. Se já tem conta, pule este passo.</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div style="min-width:28px; height:28px; background:#0f2340; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0;">2</div>
+          <div>
+            <div style="font-weight:600; font-size:14px; color:#1c1c1e;">Crie um repositório novo</div>
+            <div style="font-size:13px; color:#6b7280; margin-top:2px;">Clique em <strong>+</strong> (canto superior direito) → <em>New repository</em>. Dê o nome que quiser, ex: <code style="background:#f3f4f6; padding:2px 6px; border-radius:4px;">reuniao-obras</code>. Marque <strong>Public</strong>. Clique em <em>Create repository</em>.</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div style="min-width:28px; height:28px; background:#0f2340; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0;">3</div>
+          <div>
+            <div style="font-weight:600; font-size:14px; color:#1c1c1e;">Suba o arquivo HTML</div>
+            <div style="font-size:13px; color:#6b7280; margin-top:2px;">Na página do repositório, clique em <em>uploading an existing file</em>. Arraste o arquivo HTML baixado e <strong>renomeie-o para <code style="background:#f3f4f6; padding:2px 6px; border-radius:4px;">index.html</code></strong> antes de subir. Clique em <em>Commit changes</em>.</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div style="min-width:28px; height:28px; background:#f97316; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0;">4</div>
+          <div>
+            <div style="font-weight:600; font-size:14px; color:#1c1c1e;">Ative o GitHub Pages</div>
+            <div style="font-size:13px; color:#6b7280; margin-top:2px;">No repositório: <em>Settings</em> → <em>Pages</em> (menu lateral esquerdo) → em <strong>Source</strong> selecione <em>Deploy from a branch</em> → Branch: <strong>main</strong> → pasta <strong>/ (root)</strong> → clique <em>Save</em>.</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div style="min-width:28px; height:28px; background:#16a34a; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0;">✓</div>
+          <div>
+            <div style="font-weight:600; font-size:14px; color:#16a34a;">Aguarde ~1 minuto e acesse o link</div>
+            <div style="font-size:13px; color:#6b7280; margin-top:2px;">O GitHub Pages publica em até 60 segundos. O link aparece na mesma tela <em>Settings → Pages</em>. Formato: <code style="background:#f3f4f6; padding:2px 6px; border-radius:4px;">https://seu-usuario.github.io/reuniao-obras/</code>. Para atualizar o formulário depois, basta fazer upload do novo <code>index.html</code> no mesmo repositório.</div>
+          </div>
+        </div>
+
+      </div>
+      <div style="background:#fff3e8; border-radius:8px; padding:12px 16px; margin-top:16px; font-size:13px; color:#c2410c;">
+        <strong>💡 Sobre os dados:</strong> O formulário salva automaticamente no navegador (<code>localStorage</code>) — cada computador tem seu próprio rascunho local. Use <strong>Exportar JSON</strong> para carregar a sessão em outro dispositivo, ou <strong>Copiar link</strong> para compartilhar o preenchimento atual com alguém via URL.
+      </div>
+      <div style="background:#e8f0f8; border-radius:8px; padding:12px 16px; margin-top:10px; font-size:13px; color:#1e4976;">
+        <strong>🔒 Privacidade:</strong> O repositório precisa ser <em>Public</em> para o GitHub Pages funcionar no plano gratuito. Se quiser manter o formulário privado, use o plano GitHub Pro (pago) ou opte pelo Netlify, que permite sites privados gratuitamente.
+      </div>
+    </div>
+      <button class="btn btn-export" onclick="exportPDF()">🖨 Exportar PDF</button>
+      <button class="btn btn-export" onclick="exportText()">📄 Baixar .txt</button>
+      <button class="btn btn-export" onclick="exportJSON()">💾 Salvar .json</button>
+      <button class="btn btn-secondary" onclick="copyShareableLink()">🔗 Copiar link</button>
+      <button class="btn btn-secondary" onclick="importJSON()">📂 Importar .json</button>
+      <button class="btn btn-secondary" onclick="prevTab()">← Voltar</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────────
+let currentTab = 0;
+const totalTabs = 8;
+const visitedTabs = new Set([0]); // track which tabs have been opened
+
+const camposObra = [
+  ["Nome / Código da Obra", "Identificação", "obrigatorio"],
+  ["Cliente / Dono da Obra", "Identificação", "obrigatorio"],
+  ["Tipo de Obra", "Classificação", "obrigatorio"],
+  ["Endereço completo", "Localização", "obrigatorio"],
+  ["Coordenadas GPS", "Localização", "opcional"],
+  ["Data de início contratual", "Prazo", "obrigatorio"],
+  ["Data de término prevista", "Prazo", "obrigatorio"],
+  ["Valor do contrato (R$)", "Financeiro", "obrigatorio"],
+  ["Número do contrato", "Financeiro", "opcional"],
+  ["Engenheiro responsável", "Equipe", "obrigatorio"],
+  ["Fiscal de obras", "Equipe", "opcional"],
+  ["Coordenador responsável", "Equipe", "obrigatorio"],
+  ["Empreiteira principal", "Contrato", "opcional"],
+  ["Status da obra", "Status", "obrigatorio"],
+  ["% de avanço físico", "Progresso", "obrigatorio"],
+  ["URL de câmera ao vivo", "Mídia", "opcional"],
+  ["Imagem de capa", "Mídia", "opcional"],
+  ["Observações gerais", "Notas", "opcional"],
+  ["Classificação de risco", "Risco", "opcional"],
+  ["ART / RRT vinculada", "Documentação", "opcional"],
+];
+
+// Build campos table
+const tbody = document.getElementById('campos-tbody');
+camposObra.forEach(([campo, grupo, status], i) => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${campo}</td>
+    <td>${grupo}</td>
+    <td><span class="badge badge-${status}">${status === 'obrigatorio' ? 'Obrigatório' : 'Opcional'}</span></td>
+    <td><select class="status-select" id="campo-${i}" onchange="updateField('campo-${i}')">
+      <option value="">-- validar --</option>
+      <option value="obrigatorio">Obrigatório</option>
+      <option value="opcional">Opcional</option>
+      <option value="remover">Remover</option>
+      <option value="diferente">Diferente do proposto</option>
+    </select></td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// ── CHIPS ──────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.option-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const group = chip.dataset.group;
+    const val = chip.dataset.val;
+    const isMulti = chip.classList.contains('multi');
+
+    if (isMulti) {
+      chip.classList.toggle('selected');
+    } else {
+      document.querySelectorAll(`[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      const hiddenId = chip.closest('.card').querySelector('input[type="hidden"]');
+      if (hiddenId) hiddenId.value = val;
+    }
+
+    // Update multi hidden
+    if (isMulti) {
+      const selected = [...document.querySelectorAll(`[data-group="${group}"].selected`)].map(c => c.dataset.val);
+      const allHidden = document.querySelectorAll(`[id$="-${group}"], #q${group}`);
+      // find closest hidden
+      const cardHidden = chip.closest('.card')?.querySelector('input[type="hidden"]');
+      if (cardHidden) cardHidden.value = selected.join(', ');
+    }
+
+    updateProgress();
+  });
+});
+
+// ── TABS ───────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const idx = parseInt(tab.dataset.tab);
+    goToTab(idx);
+  });
+});
+
+function goToTab(idx) {
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`panel-${idx}`).classList.add('active');
+  document.querySelector(`[data-tab="${idx}"]`).classList.add('active');
+  currentTab = idx;
+  visitedTabs.add(idx);
+
+  // Mark all visited tabs as done (except current)
+  document.querySelectorAll('.tab').forEach(t => {
+    const i = parseInt(t.dataset.tab);
+    if (visitedTabs.has(i) && i !== idx) t.classList.add('done');
+    else t.classList.remove('done');
+  });
+
+  // Update prev/next button states within each panel
+  document.querySelectorAll('.btn-secondary[onclick="prevTab()"]').forEach(btn => {
+    btn.disabled = idx === 0;
+  });
+  document.querySelectorAll('.btn-primary[onclick="nextTab()"]').forEach(btn => {
+    btn.disabled = idx === totalTabs - 1;
+  });
+
+  if (idx === 7) buildSummary();
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextTab() {
+  if (currentTab < totalTabs - 1) goToTab(currentTab + 1);
+}
+function prevTab() {
+  if (currentTab > 0) goToTab(currentTab - 1);
+}
+
+// ── PROGRESS ──────────────────────────────────────────────────────────────────
+function updateProgress() {
+  const allInputs = document.querySelectorAll('textarea, input[type="text"]');
+  let filled = 0;
+  allInputs.forEach(el => { if (el.value.trim()) filled++; });
+  const selects = document.querySelectorAll('select.status-select');
+  let filledSel = 0;
+  selects.forEach(s => { if (s.value) filledSel++; });
+  const chips = {};
+  document.querySelectorAll('.option-chip.selected').forEach(c => { chips[c.dataset.group] = true; });
+
+  const total = allInputs.length + selects.length;
+  const totalFilled = filled + filledSel + Object.keys(chips).length;
+  const pct = Math.min(100, Math.round((totalFilled / Math.max(total, 1)) * 100));
+
+  document.getElementById('globalBar').style.width = pct + '%';
+  document.getElementById('globalPct').textContent = pct + '%';
+}
+
+function updateField(id) { updateProgress(); }
+
+// ── SUMMARY ───────────────────────────────────────────────────────────────────
+function buildSummary() {
+  const now = new Date().toLocaleString('pt-BR');
+  document.getElementById('export-meta').textContent = `Soluttions Engenharia · ${now}`;
+
+  const sections = [
+    {
+      title: "💻 Reação ao Produto",
+      items: [
+        { q: "O que pareceu útil / não seria usado", id: "q01" },
+        { q: "Faltou alguma coisa enquanto usava", id: "q02" },
+        { q: "O que precisaria para mostrar ao campo amanhã", id: "q03" },
+        { q: "Nota de impressão geral", id: "q04-nota" },
+        { q: "Justificativa da nota", id: "q04-just" },
+      ]
+    },
+    {
+      title: "⚙️ Como Trabalham Hoje",
+      items: [
+        { q: "Como registra o dia (tipo)", id: "q05-tipo" },
+        { q: "Como registra o dia (detalhes)", id: "q05" },
+        { q: "Destino das evidências fotográficas", id: "q06-foto" },
+        { q: "Detalhes das evidências", id: "q06" },
+        { q: "Fluxo de comunicação de ocorrências", id: "q07" },
+        { q: "Onde ficam os arquivos", id: "q08" },
+        { q: "Softwares usados hoje", id: "q09-sw" },
+        { q: "Detalhes sobre softwares", id: "q09" },
+      ]
+    },
+    {
+      title: "📋 Cadastro de Obra",
+      items: [
+        { q: "Campos adicionais não listados", id: "q10-extra" },
+        { q: "Estrutura de responsáveis e hierarquia", id: "q10" },
+        { q: "Categorização de obras", id: "q11" },
+      ]
+    },
+    {
+      title: "📋 Cadastro — Validação dos Campos",
+      isCampos: true
+    },
+    {
+      title: "📓 Diário de Obra",
+      items: [
+        { q: "O que não pode faltar no diário (10 min)", id: "q12" },
+        { q: "Quando é preenchido / momento", id: "q13-momento" },
+        { q: "Quem preenche / detalhes", id: "q13" },
+        { q: "Validação das seções — Clima", id: "sec-clima" },
+        { q: "Validação das seções — Mão de Obra", id: "sec-mo" },
+        { q: "Validação das seções — Atividades", id: "sec-ativ" },
+        { q: "Validação das seções — Materiais", id: "sec-mat" },
+        { q: "Validação das seções — Ocorrências", id: "sec-ocorr" },
+        { q: "Validação das seções — Evidências Fotográficas", id: "sec-foto" },
+        { q: "Validação das seções — Validação/Assinatura", id: "sec-valid" },
+        { q: "Quem valida o diário / workflow", id: "q14" },
+        { q: "Relatório gerado a partir do diário", id: "q15" },
+      ]
+    },
+    {
+      title: "👤 Portal do Cliente",
+      items: [
+        { q: "O que o cliente normalmente quer saber", id: "q16" },
+        { q: "O que nunca mostraria ao cliente", id: "q17" },
+        { q: "Itens marcados para o portal", id: "q18-portal" },
+        { q: "Observações sobre o portal", id: "q18-obs" },
+        { q: "Nível de detalhe para o cliente", id: "q18-nivel" },
+        { q: "Detalhes do nível de detalhe", id: "q18" },
+      ]
+    },
+    {
+      title: "🚀 Novas Funcionalidades",
+      items: [
+        { q: "Câmeras — situação atual", id: "q19-camera" },
+        { q: "Câmeras — detalhes", id: "q19" },
+        { q: "BIM — situação atual", id: "q20-bim" },
+        { q: "BIM — detalhes", id: "q20" },
+        { q: "Repositório — tipos de documento", id: "q21-repo" },
+        { q: "Repositório — detalhes", id: "q21" },
+        { q: "Trava — tipo de aprovação", id: "q22-trava" },
+        { q: "Trava — detalhes", id: "q22" },
+      ]
+    },
+    {
+      title: "💡 Provocações Estratégicas",
+      items: [
+        { q: "Uma coisa que eliminaria uma dor real", id: "pq1" },
+        { q: "O que tem vergonha de mostrar para cliente grande", id: "pq2" },
+        { q: "Como usa no celular em campo", id: "pq3" },
+        { q: "O que faria hesitar em dar acesso ao cliente", id: "pq4" },
+        { q: "Sistema de referência que admira", id: "pq5" },
+        { q: "Volume esperado nos próximos 6 meses", id: "pq6" },
+        { q: "Outros pontos levantados", id: "outros" },
+      ]
+    }
+  ];
+
+  let html = '';
+  let filled = 0, total = 0;
+
+  sections.forEach(sec => {
+    html += `<div class="output-block"><h3>${sec.title}</h3>`;
+
+    if (sec.isCampos) {
+      camposObra.forEach(([campo, grupo, proposto], i) => {
+        const sel = document.getElementById(`campo-${i}`);
+        const val = sel ? sel.value : '';
+        total++;
+        if (val) filled++;
+        html += `<div class="output-item">
+          <div class="output-q">${campo} (${grupo}) — Proposto: ${proposto}</div>
+          <div class="output-a ${!val ? 'empty' : ''}">${val || '(não validado)'}</div>
+        </div>`;
+      });
+    } else {
+      sec.items.forEach(item => {
+        const el = document.getElementById(item.id);
+        const val = el ? el.value.trim() : '';
+        total++;
+        if (val) filled++;
+        html += `<div class="output-item">
+          <div class="output-q">${item.q}</div>
+          <div class="output-a ${!val ? 'empty' : ''}">${val || '(não preenchido)'}</div>
+        </div>`;
+      });
+    }
+
+    html += '</div>';
+  });
+
+  document.getElementById('summary-content').innerHTML = html;
+  document.getElementById('stat-filled').textContent = filled;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-pct').textContent = Math.round((filled/total)*100) + '%';
+}
+
+// ── AUTOSAVE (localStorage) ───────────────────────────────────────────────────
+const SAVE_KEY = 'soluttions_reuniao_v1';
+
+function collectAllData() {
+  const data = {};
+  document.querySelectorAll('textarea, input, select').forEach(el => {
+    if (el.id) data[el.id] = el.value;
+  });
+  // chips
+  const chipGroups = {};
+  document.querySelectorAll('.option-chip.selected').forEach(c => {
+    const g = c.dataset.group;
+    if (!chipGroups[g]) chipGroups[g] = [];
+    chipGroups[g].push(c.dataset.val);
+  });
+  data.__chips = chipGroups;
+  data.__savedAt = new Date().toISOString();
+  return data;
+}
+
+function restoreData(data) {
+  Object.entries(data).forEach(([id, val]) => {
+    if (id === '__chips' || id === '__savedAt') return;
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  if (data.__chips) {
+    Object.entries(data.__chips).forEach(([group, vals]) => {
+      vals.forEach(v => {
+        const chip = document.querySelector(`[data-group="${group}"][data-val="${v}"]`);
+        if (chip) chip.classList.add('selected');
+      });
+    });
+  }
+  updateProgress();
+  updateSaveStatus('Dados restaurados ✓', '#16a34a');
+}
+
+let saveTimer = null;
+function scheduleAutosave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      const data = collectAllData();
+      localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+      updateSaveStatus('Salvo automaticamente ✓', '#16a34a');
+    } catch(e) {
+      updateSaveStatus('Erro ao salvar', '#dc2626');
+    }
+  }, 1200);
+}
+
+function updateSaveStatus(msg, color) {
+  const el = document.getElementById('save-status');
+  if (el) { el.textContent = msg; el.style.color = color; }
+}
+
+// ── EXPORT TXT ────────────────────────────────────────────────────────────────
+function exportText() {
+  buildSummary();
+  const now = new Date().toLocaleString('pt-BR');
+  let txt = `SOLUTTIONS ENGENHARIA\nRELATÓRIO DE ELICITAÇÃO — REUNIÃO DIRETOR DE OBRAS\n${now}\n\n${'='.repeat(60)}\n\n`;
+  document.querySelectorAll('.output-block').forEach(block => {
+    const title = block.querySelector('h3')?.textContent || '';
+    txt += `\n${title}\n${'-'.repeat(40)}\n`;
+    block.querySelectorAll('.output-item').forEach(item => {
+      const q = item.querySelector('.output-q')?.textContent || '';
+      const a = item.querySelector('.output-a')?.textContent || '';
+      if (!a.includes('não preenchido') && !a.includes('não validado')) {
+        txt += `\n${q}:\n  ${a}\n`;
+      }
+    });
+    txt += '\n';
+  });
+  downloadBlob(txt, `elicitacao_${new Date().toISOString().slice(0,10)}.txt`, 'text/plain');
+}
+
+// ── EXPORT PDF ────────────────────────────────────────────────────────────────
+function exportPDF() {
+  buildSummary();
+  const style = document.createElement('style');
+  style.id = 'print-override';
+  style.textContent = `
+    @media print {
+      body { background: white !important; }
+      .header { background: #0f2340 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .tabs, .nav-buttons, .export-actions, #deploy-guide { display: none !important; }
+      .section-panel { display: block !important; }
+      .section-panel:not(#panel-7) { display: none !important; }
+      #panel-7 { display: block !important; }
+      .export-summary { background: #0f2340 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .stat-box { background: rgba(255,255,255,0.1) !important; -webkit-print-color-adjust: exact; }
+      .output-block { break-inside: avoid; box-shadow: none; border: 1px solid #e2e4e8; }
+      .output-a { background: #faf8f4 !important; -webkit-print-color-adjust: exact; }
+    }
+  `;
+  document.head.appendChild(style);
+  window.print();
+  setTimeout(() => { const s = document.getElementById('print-override'); if (s) s.remove(); }, 1000);
+}
+
+// ── EXPORT JSON ───────────────────────────────────────────────────────────────
+function exportJSON() {
+  const data = collectAllData();
+  downloadBlob(JSON.stringify(data, null, 2), `elicitacao_${new Date().toISOString().slice(0,10)}.json`, 'application/json');
+}
+
+function importJSON() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        restoreData(data);
+        showToast('Dados importados com sucesso!');
+      } catch { showToast('Arquivo inválido', true); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ── SHAREABLE URL ─────────────────────────────────────────────────────────────
+function copyShareableLink() {
+  const data = collectAllData();
+  const compressed = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+  const url = window.location.href.split('?')[0] + '?d=' + compressed;
+  if (url.length > 8000) {
+    showToast('Dados demais para URL — use Exportar JSON', true);
+    return;
+  }
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('Link copiado! Cole no navegador para restaurar os dados.');
+  }).catch(() => {
+    prompt('Copie este link:', url);
+  });
+}
+
+function loadFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const d = params.get('d');
+  if (d) {
+    try {
+      const data = JSON.parse(decodeURIComponent(escape(atob(d))));
+      restoreData(data);
+      showToast('Dados restaurados do link!');
+    } catch { /* ignore */ }
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function downloadBlob(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = isError ? '#dc2626' : '#16a34a';
+  t.style.opacity = '1';
+  t.style.transform = 'translateY(0)';
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(12px)'; }, 3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.querySelectorAll('textarea, input, select').forEach(el => {
+  el.addEventListener('input', () => { updateProgress(); scheduleAutosave(); });
+  el.addEventListener('change', () => { updateProgress(); scheduleAutosave(); });
+});
+
+// Restore from localStorage on load
+window.addEventListener('DOMContentLoaded', () => {
+  goToTab(0); // initialize button states
+  loadFromURL();
+  if (!window.location.search.includes('?d=')) {
+    try {
+      const saved = localStorage.getItem(SAVE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        const savedAt = data.__savedAt ? new Date(data.__savedAt).toLocaleString('pt-BR') : '?';
+        if (confirm(`Existe uma sessão salva de ${savedAt}.\nDeseja restaurar?`)) {
+          restoreData(data);
+        }
+      }
+    } catch { /* ignore */ }
+  }
+});
+
+updateProgress();
+</script>
+
+<!-- TOAST -->
+<div id="toast" style="
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(12px);
+  background:#16a34a; color:white; padding:12px 24px; border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
+  opacity:0; transition:all 0.3s ease; z-index:9999; pointer-events:none;
+  box-shadow:0 4px 20px rgba(0,0,0,0.2); white-space:nowrap;
+"></div>
+
+</body>
+</html>
+</body>
+</html>
